@@ -1,18 +1,54 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from 'expo-router';
+import { NotoSansKR_400Regular } from '@expo-google-fonts/noto-sans-kr/400Regular';
+import { NotoSansKR_700Bold } from '@expo-google-fonts/noto-sans-kr/700Bold';
+import { NotoSansKR_900Black } from '@expo-google-fonts/noto-sans-kr/900Black';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { useFonts } from 'expo-font';
+import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
-import { useColorScheme } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
+import { useEffect, useState } from 'react';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-import { AnimatedSplashOverlay } from '@/components/animated-icon';
-import AppTabs from '@/components/app-tabs';
+import { AuthProvider, useAuth } from '@/lib/auth';
+import { C } from '@/theme';
 
-SplashScreen.preventAutoHideAsync();
+SplashScreen.preventAutoHideAsync().catch(() => {});
 
-export default function TabLayout() {
-  const colorScheme = useColorScheme();
+function Routes() {
+  const { ready, signedIn } = useAuth();
+  const [fontsLoaded, fontError] = useFonts({ NotoSansKR_400Regular, NotoSansKR_700Bold, NotoSansKR_900Black });
+  const done = ready && (fontsLoaded || !!fontError);
+
+  useEffect(() => {
+    if (done) SplashScreen.hideAsync().catch(() => {});
+  }, [done]);
+
+  if (!done) return null;
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <AnimatedSplashOverlay />
-      <AppTabs />
-    </ThemeProvider>
+    <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: C.bg } }}>
+      <Stack.Protected guard={!signedIn}>
+        <Stack.Screen name="login" />
+      </Stack.Protected>
+      <Stack.Protected guard={signedIn}>
+        <Stack.Screen name="index" />
+        <Stack.Screen name="team/new" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="team/join" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="team/[teamId]" />
+      </Stack.Protected>
+    </Stack>
+  );
+}
+
+export default function RootLayout() {
+  const [qc] = useState(() => new QueryClient({ defaultOptions: { queries: { retry: 1, staleTime: 15_000 } } }));
+  return (
+    <SafeAreaProvider>
+      <QueryClientProvider client={qc}>
+        <AuthProvider>
+          <StatusBar style="dark" />
+          <Routes />
+        </AuthProvider>
+      </QueryClientProvider>
+    </SafeAreaProvider>
   );
 }
