@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { AppBar, Badge, Button, Card, Chip, Empty, Fab, IconButton, Loading, Row, Track, Txt } from '@/components/ui';
+import { AppBar, Badge, Button, Card, Chip, Empty, Fab, Loading, Row, Track, Txt } from '@/components/ui';
 import { dDay, dueLabel, hoursUntil } from '@/lib/format';
 import { useBoard, useMyMemberId, useTeam, useTeamId } from '@/lib/hooks';
 import { leaveTeamScreens } from '@/lib/nav';
@@ -31,10 +31,8 @@ export default function BoardScreen() {
         title={team.data?.project_name ?? ' '}
         onBack={leaveTeamScreens}
         right={
-          <>
-            <IconButton icon="add" label="할 일 추가" onPress={() => router.push(`/team/${teamId}/task-edit`)} />
-            <IconButton icon="ellipsis-horizontal" label="팀 메뉴" onPress={() => router.push(`/team/${teamId}/more`)} />
-          </>
+          // 아이콘만으로는 뜻을 알기 어려워 글자를 붙인다. 팀 메뉴는 아래 '팀' 탭과 같아 뺐다.
+          <Button small kind="secondary" icon="add" label="할 일" onPress={() => router.push(`/team/${teamId}/task-edit`)} />
         }
       />
       <View style={{ flex: 1 }}>

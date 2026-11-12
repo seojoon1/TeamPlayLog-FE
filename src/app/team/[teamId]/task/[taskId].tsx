@@ -2,10 +2,11 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Linking, StyleSheet, View } from 'react-native';
 
+import { AttachmentChip, ConfirmActions } from '@/components/record-parts';
 import { Avatar, Badge, Button, Card, Chip, Empty, ErrorText, Loading, Row, Screen, Section, TextLink, Txt } from '@/components/ui';
 import { api, ApiError } from '@/lib/api';
 import { ago, dueLabel, RECORD_TYPE_LABEL, shortDate } from '@/lib/format';
-import { useMyMemberId, useTask, useTaskRecords, useTeam, useTeamId } from '@/lib/hooks';
+import { useInbox, useMyMemberId, useTask, useTaskRecords, useTeam, useTeamId } from '@/lib/hooks';
 import { RECORD_STATUS, TASK_STATUS } from '@/lib/status';
 import type { TaskEvent, Team } from '@/lib/types';
 import { C, S } from '@/theme';
@@ -24,6 +25,9 @@ export default function TaskDetail() {
   const leader = team.data?.my_role === 'LEADER';
   const recs = records.data?.items ?? [];
   const confirmed = recs.filter((r) => r.status === 'CONFIRMED').length;
+  // 내가 확인해야 하는 기록은 여기서도 바로 확인할 수 있게 한다
+  const inbox = useInbox(teamId);
+  const toConfirm = new Set(inbox.data?.map((r) => r.id));
 
   const setStatus = useMutation({
     mutationFn: (status: string) => api(`/tasks/${taskId}`, { method: 'PATCH', body: { status } }),
@@ -126,8 +130,9 @@ export default function TaskDetail() {
               <Txt t="tiny">{r.author_name}</Txt>
               {r.note ? <Txt t="body">{r.note}</Txt> : null}
               {r.link_url ? <Chip icon="link" label={r.link_url.replace(/^https?:\/\//, '').slice(0, 34)} onPress={() => Linking.openURL(r.link_url!)} /> : null}
-              {r.file_key ? <Badge label="첨부 파일" tone="info" icon="attach" /> : null}
+              {r.file_key ? <AttachmentChip fileKey={r.file_key} authorName={r.author_name} /> : null}
               {by.length ? <Txt t="tiny">{by.join(', ')}님이 확인했어요</Txt> : null}
+              {toConfirm.has(r.id) ? <ConfirmActions record={r} teamId={teamId} /> : null}
             </Card>
           );
         })}

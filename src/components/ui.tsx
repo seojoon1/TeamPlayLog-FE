@@ -1,7 +1,7 @@
 /** 공통 부품. 피그마 「디자인 기초」의 버튼·칩·배지·카드·입력 칸과 같은 모양. */
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import type { ComponentProps, ReactNode } from 'react';
+import { useEffect, useState, type ComponentProps, type ReactNode } from 'react';
 import {
   ActivityIndicator,
   KeyboardAvoidingView,
@@ -367,9 +367,28 @@ export function Empty({ icon, title, body, action }: { icon: IconName; title: st
 
 export function Loading() {
   return (
-    <View style={{ padding: S.xxl, alignItems: 'center' }}>
+    <View style={{ padding: S.xxl, alignItems: 'center', gap: S.lg }}>
       <ActivityIndicator color={C.primary} />
+      <SlowHint />
     </View>
+  );
+}
+
+/**
+ * 기다림이 길어지면(4초) 이유를 알려 준다. 무료 서버는 쉬다가 첫 요청에 30초쯤 걸려,
+ * 안내가 없으면 앱이 멈춘 것처럼 보인다. 기다리는 동안에만 그려서 쓴다.
+ */
+export function SlowHint() {
+  const [slow, setSlow] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setSlow(true), 4000);
+    return () => clearTimeout(t);
+  }, []);
+  if (!slow) return null;
+  return (
+    <Notice icon="cloud-outline" tone="warn">
+      서버를 깨우는 중이에요. 한동안 아무도 쓰지 않았다면 처음 접속에 30초쯤 걸릴 수 있어요.
+    </Notice>
   );
 }
 

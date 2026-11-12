@@ -8,7 +8,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { AppBar, Avatar, Badge, Button, Card, ErrorText, ListRow, Row, Txt, type IconName } from '@/components/ui';
 import { api, ApiError } from '@/lib/api';
-import { useAuth } from '@/lib/auth';
 import { dDay, dueLabel, daysUntil, shortDate } from '@/lib/format';
 import { useAgreement, useMe, useReports, useTeam, useTeamId } from '@/lib/hooks';
 import { leaveTeamScreens } from '@/lib/nav';
@@ -19,7 +18,6 @@ import { C, F, MAX_WIDTH, S } from '@/theme';
 export default function MoreScreen() {
   const teamId = useTeamId();
   const qc = useQueryClient();
-  const { logout } = useAuth();
   const me = useMe();
   const team = useTeam(teamId);
   const ag = useAgreement(teamId);
@@ -119,9 +117,14 @@ export default function MoreScreen() {
 
           <View style={{ gap: S.sm }}>
             <Card style={{ paddingVertical: 4, gap: 0 }}>
-              <Menu icon="swap-horizontal" label="다른 팀 보기" onPress={() => router.replace('/')} />
-              <Menu icon="exit-outline" label={confirmLeave ? '한 번 더 누르면 팀을 나가요' : '팀 나가기'} danger onPress={() => (confirmLeave ? leave.mutate() : setConfirmLeave(true))} />
-              <Menu icon="log-out-outline" label="로그아웃" onPress={logout} last />
+              <Menu icon="swap-horizontal" label="다른 팀 보기" onPress={leaveTeamScreens} last />
+            </Card>
+          </View>
+
+          {/* 되돌릴 수 없는 일은 다른 메뉴와 떨어뜨려 맨 아래에 둔다. 로그아웃은 팀 목록 › 내 정보에 있다. */}
+          <View style={{ gap: S.sm, marginTop: S.lg }}>
+            <Card style={{ paddingVertical: 4, gap: 0 }}>
+              <Menu icon="exit-outline" label={confirmLeave ? '한 번 더 누르면 팀을 나가요' : '팀 나가기'} danger onPress={() => (confirmLeave ? leave.mutate() : setConfirmLeave(true))} last />
             </Card>
             <ErrorText message={leave.error instanceof ApiError ? leave.error.message : null} />
           </View>

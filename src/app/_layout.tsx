@@ -1,6 +1,3 @@
-import { NotoSansKR_400Regular } from '@expo-google-fonts/noto-sans-kr/400Regular';
-import { NotoSansKR_700Bold } from '@expo-google-fonts/noto-sans-kr/700Bold';
-import { NotoSansKR_900Black } from '@expo-google-fonts/noto-sans-kr/900Black';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
@@ -14,9 +11,17 @@ import { C } from '@/theme';
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
+// Noto Sans KR을 자주 쓰는 한글 2350자 + 영문·기호만 남겨 줄인 글꼴 (각 6MB → 0.5MB, scripts/subset_fonts.py).
+// 목록에 없는 드문 글자는 휴대폰 기본 글꼴로 대신 그려진다. 라이선스: assets/fonts/OFL.txt
+const FONTS = {
+  NotoSansKR_400Regular: require('../../assets/fonts/NotoSansKR-400Regular-subset.ttf'),
+  NotoSansKR_700Bold: require('../../assets/fonts/NotoSansKR-700Bold-subset.ttf'),
+  NotoSansKR_900Black: require('../../assets/fonts/NotoSansKR-900Black-subset.ttf'),
+};
+
 function Routes() {
   const { ready, signedIn } = useAuth();
-  const [fontsLoaded, fontError] = useFonts({ NotoSansKR_400Regular, NotoSansKR_700Bold, NotoSansKR_900Black });
+  const [fontsLoaded, fontError] = useFonts(FONTS);
   const done = ready && (fontsLoaded || !!fontError);
 
   useEffect(() => {

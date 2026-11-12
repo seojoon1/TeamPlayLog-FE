@@ -30,9 +30,11 @@ export default function AlertsScreen() {
   const q = useNotifications();
   const items = (q.data?.items ?? []).filter((n) => !n.team_id || n.team_id === teamId);
   const groups: [string, AppNotification[]][] = [
-    ['오늘', items.filter((n) => dayDiff(n.created_at) === 0)],
-    ['어제', items.filter((n) => dayDiff(n.created_at) === 1)],
-    ['이전', items.filter((n) => dayDiff(n.created_at) > 1)],
+    // 안 읽은 알림을 맨 위에 따로 모으고, 읽은 알림은 날짜로 나눈다
+    ['새 알림', items.filter((n) => !n.read_at)],
+    ['오늘', items.filter((n) => n.read_at && dayDiff(n.created_at) === 0)],
+    ['어제', items.filter((n) => n.read_at && dayDiff(n.created_at) === 1)],
+    ['이전', items.filter((n) => n.read_at && dayDiff(n.created_at) > 1)],
   ];
 
   const read = useMutation({
@@ -77,7 +79,7 @@ export default function AlertsScreen() {
                         <View style={{ flex: 1, gap: 2 }}>
                           <Txt t="b">{n.title}</Txt>
                           <Txt t="sm">{n.body}</Txt>
-                          <Txt t="tiny">{label === '오늘' ? ago(n.created_at) : dateTime(n.created_at)}</Txt>
+                          <Txt t="tiny">{dayDiff(n.created_at) === 0 ? ago(n.created_at) : dateTime(n.created_at)}</Txt>
                         </View>
                         {!n.read_at ? <View style={st.dot} /> : null}
                       </ListRow>

@@ -2,7 +2,7 @@ import { useRef, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View, type ScrollViewInstance } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { Button, ErrorText, Field, KeyboardScreen, Txt } from '@/components/ui';
+import { Button, ErrorText, Field, KeyboardScreen, SlowHint, Txt } from '@/components/ui';
 import { ApiError } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
 import { C, F, MAX_WIDTH, S } from '@/theme';
@@ -62,6 +62,7 @@ export default function Login() {
               />
               {signupMode ? <Field label="이름" value={name} onChangeText={setName} placeholder="팀원에게 보일 이름 (2~12자)" maxLength={12} /> : null}
               <ErrorText message={error} />
+              {busy ? <SlowHint /> : null}
               <Button label={signupMode ? '가입하고 시작하기' : '로그인'} onPress={submit} loading={busy} disabled={!email || !password || (signupMode && name.trim().length < 2)} />
             </View>
             <View style={{ flex: 1 }} />
