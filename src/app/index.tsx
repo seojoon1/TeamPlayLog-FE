@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
+import { Pressable, RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Avatar, Badge, Button, Card, Divider, Empty, Loading, Row, Track, Txt } from '@/components/ui';
@@ -26,7 +26,11 @@ export default function Teams() {
               <Txt t="sm">안녕하세요</Txt>
               <Txt t="title">{me.data ? `${me.data.display_name}님의 팀` : ' '}</Txt>
             </View>
-            {me.data ? <Avatar name={me.data.display_name} seed={me.data.id} /> : null}
+            {me.data ? (
+              <Pressable role="button" aria-label="내 정보" onPress={() => router.push('/me')} hitSlop={8} style={({ pressed }) => pressed && { opacity: 0.6 }}>
+                <Avatar name={me.data.display_name} seed={me.data.id} />
+              </Pressable>
+            ) : null}
           </Row>
 
           {teams.isLoading ? <Loading /> : null}

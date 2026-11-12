@@ -4,6 +4,7 @@ import { router } from 'expo-router';
 import type { ComponentProps, ReactNode } from 'react';
 import {
   ActivityIndicator,
+  KeyboardAvoidingView,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -30,11 +31,15 @@ export function Txt({ t = 'body', color, style, ...rest }: TextProps & { t?: Typ
 
 // ---- 화면 틀 ------------------------------------------------------------------------
 
-export function AppBar({ title, back = true, right }: { title: string; back?: boolean; right?: ReactNode }) {
+export function AppBar({ title, back = true, right, onBack }: { title: string; back?: boolean; right?: ReactNode; onBack?: () => void }) {
   return (
     <View style={st.appbar}>
       {back ? (
-        <Pressable role="button" aria-label="뒤로" onPress={() => (router.canGoBack() ? router.back() : router.replace('/'))} style={st.iconBtn}>
+        <Pressable
+          role="button"
+          aria-label="뒤로"
+          onPress={onBack ?? (() => (router.canGoBack() ? router.back() : router.replace('/')))}
+          style={st.iconBtn}>
           <Ionicons name="chevron-back" size={24} color={C.text} />
         </Pressable>
       ) : null}
@@ -71,17 +76,32 @@ export function Screen({
   const insets = useSafeAreaInsets();
   const body = <View style={[st.inner, { gap }]}>{children}</View>;
   return (
-    <SafeAreaView style={st.screen} edges={edges}>
-      {bar && title !== undefined ? <AppBar title={title} back={back} right={right} /> : null}
-      {scroll ? (
-        <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
-          {body}
-        </ScrollView>
-      ) : (
-        <View style={{ flex: 1 }}>{body}</View>
-      )}
-      {footer ? <View style={[st.footer, { paddingBottom: 20 + (edges.includes('bottom') ? 0 : insets.bottom) }]}>{footer}</View> : null}
-    </SafeAreaView>
+    <KeyboardScreen>
+      <SafeAreaView style={st.screen} edges={edges}>
+        {bar && title !== undefined ? <AppBar title={title} back={back} right={right} /> : null}
+        {scroll ? (
+          <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
+            {body}
+          </ScrollView>
+        ) : (
+          <View style={{ flex: 1 }}>{body}</View>
+        )}
+        {footer ? <View style={[st.footer, { paddingBottom: 20 + (edges.includes('bottom') ? 0 : insets.bottom) }]}>{footer}</View> : null}
+      </SafeAreaView>
+    </KeyboardScreen>
+  );
+}
+
+/**
+ * 키보드가 올라오면 화면 아래쪽을 그만큼 비워, 하단 고정 버튼이 키보드 위로 올라오게 한다.
+ * Expo 앱은 안드로이드에서도 edge-to-edge라 창이 저절로 줄지 않으므로 양쪽 모두 padding을 쓴다.
+ * (Expo 키보드 가이드) 화면 맨 위에 놓고 쓰므로 keyboardVerticalOffset은 0.
+ */
+export function KeyboardScreen({ children }: { children: ReactNode }) {
+  return (
+    <KeyboardAvoidingView behavior="padding" style={{ flex: 1, backgroundColor: C.bg }}>
+      {children}
+    </KeyboardAvoidingView>
   );
 }
 

@@ -11,6 +11,7 @@ import { api, ApiError } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
 import { dDay, dueLabel, daysUntil, shortDate } from '@/lib/format';
 import { useAgreement, useMe, useReports, useTeam, useTeamId } from '@/lib/hooks';
+import { leaveTeamScreens } from '@/lib/nav';
 import type { Team } from '@/lib/types';
 import { C, F, MAX_WIDTH, S } from '@/theme';
 
@@ -49,7 +50,7 @@ export default function MoreScreen() {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: C.bg }} edges={['top']}>
-      <AppBar title="팀" back={false} />
+      <AppBar title="팀" onBack={leaveTeamScreens} />
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <View style={st.inner}>
           {t ? (

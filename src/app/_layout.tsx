@@ -31,6 +31,7 @@ function Routes() {
       </Stack.Protected>
       <Stack.Protected guard={signedIn}>
         <Stack.Screen name="index" />
+        <Stack.Screen name="me" />
         <Stack.Screen name="team/new" options={{ presentation: 'modal' }} />
         <Stack.Screen name="team/join" options={{ presentation: 'modal' }} />
         <Stack.Screen name="team/[teamId]" />

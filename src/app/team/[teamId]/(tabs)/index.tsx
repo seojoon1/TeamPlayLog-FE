@@ -7,6 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { AppBar, Badge, Button, Card, Chip, Empty, Fab, IconButton, Loading, Row, Track, Txt } from '@/components/ui';
 import { dDay, dueLabel, hoursUntil } from '@/lib/format';
 import { useBoard, useMyMemberId, useTeam, useTeamId } from '@/lib/hooks';
+import { leaveTeamScreens } from '@/lib/nav';
 import { TASK_STATUS } from '@/lib/status';
 import type { Task } from '@/lib/types';
 import { C, F, MAX_WIDTH, R, S } from '@/theme';
@@ -28,7 +29,7 @@ export default function BoardScreen() {
     <SafeAreaView style={{ flex: 1, backgroundColor: C.bg }} edges={['top']}>
       <AppBar
         title={team.data?.project_name ?? ' '}
-        back
+        onBack={leaveTeamScreens}
         right={
           <>
             <IconButton icon="add" label="할 일 추가" onPress={() => router.push(`/team/${teamId}/task-edit`)} />

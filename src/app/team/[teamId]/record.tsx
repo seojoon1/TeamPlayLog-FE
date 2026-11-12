@@ -22,7 +22,8 @@ export default function NewRecord() {
   const { taskId: initialTask } = useLocalSearchParams<{ taskId?: string }>();
   const qc = useQueryClient();
   const board = useBoard(teamId, true);
-  const [taskId, setTaskId] = useState<string | null>(initialTask ?? null);
+  // undefined = 아직 고르지 않음 → 마감이 가장 가까운 내 할 일을 골라 둔다. null = "할 일 없이 기록"
+  const [picked, setPicked] = useState<string | null | undefined>(initialTask ?? undefined);
   const [type, setType] = useState<RecordType>('OUTPUT');
   const [link, setLink] = useState('');
   const [file, setFile] = useState<Picked | null>(null);
@@ -30,6 +31,11 @@ export default function NewRecord() {
   const [error, setError] = useState<string | null>(null);
 
   const tasks = useMemo(() => (board.data?.tasks ?? []).filter((t) => t.status !== 'DONE' || t.id === initialTask), [board.data, initialTask]);
+  const nearest = useMemo(
+    () => tasks.filter((t) => t.status !== 'DONE').sort((a, b) => a.due_at.localeCompare(b.due_at))[0],
+    [tasks],
+  );
+  const taskId = picked !== undefined ? picked : (nearest?.id ?? null);
   const selected = tasks.find((t) => t.id === taskId);
   const late = selected ? isPast(selected.due_at) : false;
   const hasSomething = !!(link.trim() || file || note.trim());
@@ -74,9 +80,9 @@ export default function NewRecord() {
       <Section title="어떤 일을 했나요?">
         <Row gap={S.sm} style={{ flexWrap: 'wrap' }}>
           {tasks.map((t) => (
-            <Chip key={t.id} label={t.title} selected={taskId === t.id} onPress={() => setTaskId(taskId === t.id ? null : t.id)} />
+            <Chip key={t.id} label={t.title} selected={taskId === t.id} onPress={() => setPicked(taskId === t.id ? null : t.id)} />
           ))}
-          <Chip label="할 일 없이 기록" selected={taskId === null} onPress={() => setTaskId(null)} />
+          <Chip label="할 일 없이 기록" selected={taskId === null} onPress={() => setPicked(null)} />
         </Row>
         {late ? (
           <Notice tone="warn" icon="time-outline">

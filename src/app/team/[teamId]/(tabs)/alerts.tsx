@@ -8,6 +8,7 @@ import { AppBar, Card, Empty, ListRow, Loading, TextLink, Txt, type IconName } f
 import { api } from '@/lib/api';
 import { ago, dateTime, dayDiff } from '@/lib/format';
 import { useNotifications, useTeamId } from '@/lib/hooks';
+import { leaveTeamScreens } from '@/lib/nav';
 import type { AppNotification, NotificationKind } from '@/lib/types';
 import { C, MAX_WIDTH, S } from '@/theme';
 
@@ -54,7 +55,7 @@ export default function AlertsScreen() {
   const unread = items.filter((n) => !n.read_at).map((n) => n.id);
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: C.bg }} edges={['top']}>
-      <AppBar title="알림" back={false} right={unread.length ? <TextLink label="모두 읽음" onPress={() => read.mutate(unread)} /> : undefined} />
+      <AppBar title="알림" onBack={leaveTeamScreens} right={unread.length ? <TextLink label="모두 읽음" onPress={() => read.mutate(unread)} /> : undefined} />
       <ScrollView
         contentContainerStyle={{ flexGrow: 1 }}
         refreshControl={<RefreshControl refreshing={q.isRefetching} onRefresh={() => void q.refetch()} tintColor={C.primary} />}>

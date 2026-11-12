@@ -49,6 +49,10 @@ const st = StyleSheet.create({
     borderColor: C.line,
     backgroundColor: C.surface,
     textAlign: 'center',
+    // 안드로이드 TextInput은 기본 위아래 여백과 글꼴 여백(Noto Sans KR은 큼) 때문에 큰 글자가 위로 밀린다
+    paddingVertical: 0,
+    includeFontPadding: false,
+    textAlignVertical: 'center',
     fontFamily: F.black,
     fontSize: 32,
     letterSpacing: 8,
