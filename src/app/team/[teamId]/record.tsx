@@ -1,11 +1,12 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import * as DocumentPicker from 'expo-document-picker';
-import { router, useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text } from 'react-native';
 
 import { Button, Chip, ErrorText, Field, Notice, Row, Screen, Section, Segment, Txt } from '@/components/ui';
+import { goBack } from '@/lib/nav';
 import { api, ApiError, uploadFile } from '@/lib/api';
 import { isPast, RECORD_TYPE_SHORT } from '@/lib/format';
 import { useBoard, useTeamId } from '@/lib/hooks';
@@ -47,7 +48,7 @@ export default function NewRecord() {
       qc.invalidateQueries({ queryKey: ['board', teamId] });
       qc.invalidateQueries({ queryKey: ['records', teamId] });
       qc.invalidateQueries({ queryKey: ['task'] });
-      router.back();
+      goBack(`/team/${teamId}`);
     },
     onError: (e) => setError(e instanceof ApiError ? e.message : '저장하지 못했어요. 다시 시도해 주세요.'),
   });

@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Linking, StyleSheet, View } from 'react-native';
 
-import { Avatar, Badge, Button, Card, Chip, Empty, ErrorText, Loading, Row, Screen, Section, Txt } from '@/components/ui';
+import { Avatar, Badge, Button, Card, Chip, Empty, ErrorText, Loading, Row, Screen, Section, TextLink, Txt } from '@/components/ui';
 import { api, ApiError } from '@/lib/api';
 import { ago, dueLabel, RECORD_TYPE_LABEL, shortDate } from '@/lib/format';
 import { useMyMemberId, useTask, useTaskRecords, useTeam, useTeamId } from '@/lib/hooks';
@@ -48,6 +48,7 @@ export default function TaskDetail() {
   return (
     <Screen
       title="할 일"
+      right={canEdit ? <TextLink label="편집" onPress={() => router.push({ pathname: '/team/[teamId]/task-edit', params: { teamId, taskId } })} /> : undefined}
       footer={
         <>
           {canEdit ? (

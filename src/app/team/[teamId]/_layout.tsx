@@ -9,6 +9,7 @@ export default function TeamStack() {
       <Stack.Screen name="(tabs)" />
       <Stack.Screen name="record" options={{ presentation: 'modal' }} />
       <Stack.Screen name="task/[taskId]" />
+      <Stack.Screen name="task-edit" options={{ presentation: 'modal' }} />
       <Stack.Screen name="agreement" />
       <Stack.Screen name="agreement-edit" options={{ presentation: 'modal' }} />
       <Stack.Screen name="report" />

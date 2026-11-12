@@ -1,11 +1,11 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { router } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, View } from 'react-native';
 
 import { DateField } from '@/components/date-field';
 import { Avatar, Button, Card, Chip, ErrorText, Field, Loading, Row, Screen, Section, Txt } from '@/components/ui';
+import { goBack } from '@/lib/nav';
 import { api, ApiError } from '@/lib/api';
 import { useAgreement, useTeam, useTeamId } from '@/lib/hooks';
 import type { Agreement, Member } from '@/lib/types';
@@ -53,7 +53,7 @@ function Editor({ teamId, members, initial }: { teamId: string; members: Member[
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['agreement', teamId] });
       qc.invalidateQueries({ queryKey: ['board', teamId] });
-      router.back();
+      goBack(`/team/${teamId}/agreement`);
     },
   });
   const hasRole = Object.values(roles).some((r) => r.trim());

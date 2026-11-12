@@ -29,7 +29,12 @@ export default function BoardScreen() {
       <AppBar
         title={team.data?.project_name ?? ' '}
         back
-        right={<IconButton icon="ellipsis-horizontal" label="팀 메뉴" onPress={() => router.push(`/team/${teamId}/more`)} />}
+        right={
+          <>
+            <IconButton icon="add" label="할 일 추가" onPress={() => router.push(`/team/${teamId}/task-edit`)} />
+            <IconButton icon="ellipsis-horizontal" label="팀 메뉴" onPress={() => router.push(`/team/${teamId}/more`)} />
+          </>
+        }
       />
       <View style={{ flex: 1 }}>
         <ScrollView
