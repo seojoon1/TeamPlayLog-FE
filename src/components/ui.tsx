@@ -86,7 +86,11 @@ export function Screen({
         ) : (
           <View style={{ flex: 1 }}>{body}</View>
         )}
-        {footer ? <View style={[st.footer, { paddingBottom: 20 + (edges.includes('bottom') ? 0 : insets.bottom) }]}>{footer}</View> : null}
+        {footer ? (
+          <View style={[st.footer, { paddingBottom: 20 + (edges.includes('bottom') ? 0 : insets.bottom) }]}>
+            <View style={st.footerInner}>{footer}</View>
+          </View>
+        ) : null}
       </SafeAreaView>
     </KeyboardScreen>
   );
@@ -422,16 +426,15 @@ const st = StyleSheet.create({
   appbarRight: { flexDirection: 'row', alignItems: 'center', gap: S.sm },
   iconBtn: { width: 40, height: 40, alignItems: 'center', justifyContent: 'center' },
   footer: {
-    flexDirection: 'row',
-    gap: 10,
     paddingTop: S.md,
     paddingHorizontal: S.lg,
     backgroundColor: C.bg,
     borderTopWidth: 1,
     borderTopColor: C.line,
     width: '100%',
-    alignSelf: 'center',
   },
+  // 넓은 화면(웹)에서도 버튼이 본문 폭(MAX_WIDTH)을 넘지 않게 한다
+  footerInner: { flexDirection: 'row', gap: 10, width: '100%', maxWidth: MAX_WIDTH - S.lg * 2, alignSelf: 'center' },
   card: { backgroundColor: C.surface, borderRadius: R.lg, borderWidth: 1, borderColor: C.line, padding: S.lg, gap: S.sm },
   pressed: { opacity: 0.8 },
   btn: { height: 52, borderRadius: R.md, borderWidth: 1, paddingHorizontal: 18, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: S.sm },

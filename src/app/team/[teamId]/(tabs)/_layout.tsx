@@ -5,7 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import type { IconName } from '@/components/ui';
 import { useInbox, useNotifications, useTeamId } from '@/lib/hooks';
-import { C, F } from '@/theme';
+import { C, F, MAX_WIDTH } from '@/theme';
 
 const TABS: Record<string, { label: string; icon: IconName; iconOn: IconName }> = {
   index: { label: '팀 보드', icon: 'grid-outline', iconOn: 'grid' },
@@ -27,6 +27,7 @@ function TabBar({ state, navigateToTab }: BarProps) {
 
   return (
     <View style={[st.bar, { paddingBottom: 10 + insets.bottom }]}>
+      <View style={st.row}>
       {state.routes.map((r, i) => {
         const tab = TABS[r.name];
         if (!tab) return null;
@@ -46,6 +47,7 @@ function TabBar({ state, navigateToTab }: BarProps) {
           </Pressable>
         );
       })}
+      </View>
     </View>
   );
 }
@@ -62,7 +64,9 @@ export default function TeamTabs() {
 }
 
 const st = StyleSheet.create({
-  bar: { flexDirection: 'row', backgroundColor: C.surface, borderTopWidth: 1, borderTopColor: C.line, paddingTop: 8 },
+  bar: { backgroundColor: C.surface, borderTopWidth: 1, borderTopColor: C.line, paddingTop: 8 },
+  // 넓은 화면(웹)에서도 탭 4개가 본문 폭(MAX_WIDTH) 안에 모이게 한다
+  row: { flexDirection: 'row', width: '100%', maxWidth: MAX_WIDTH, alignSelf: 'center' },
   item: { flex: 1, alignItems: 'center', gap: 3 },
   label: { fontFamily: F.bold, fontSize: 12, lineHeight: 16, color: C.mute },
   badge: {
