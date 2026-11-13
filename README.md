@@ -38,6 +38,19 @@ npx eas-cli@latest build -p android --profile preview
 - APK가 접속할 서버 주소는 `eas.json`의 `EXPO_PUBLIC_API_URL`이다. 배포 주소가 정해지면 여기를 고친다.
 - 빌드가 끝나면 나오는 링크에서 APK를 받아 휴대폰에 설치한다 ("출처를 알 수 없는 앱" 허용 필요).
 
+## 웹 버전 배포 (EAS Hosting)
+
+웹 버전 주소: https://teamplaylog.expo.app
+
+```bash
+# .env.local 의 개발용 주소 대신 배포 서버 주소로 빌드한다 (셸에 넣은 값이 .env.local 보다 우선)
+EXPO_PUBLIC_API_URL=https://teamplaylog-api.onrender.com npx expo export -p web
+npx eas-cli@latest deploy --prod
+```
+
+- 서버(BE)의 `CORS_ORIGINS`에 이 웹 주소가 있어야 브라우저에서 API를 부를 수 있다 (BE `render.yaml`).
+- PowerShell에서는 `$env:EXPO_PUBLIC_API_URL="https://teamplaylog-api.onrender.com"; npx expo export -p web` 로 실행한다.
+
 ## 검사
 
 ```bash
